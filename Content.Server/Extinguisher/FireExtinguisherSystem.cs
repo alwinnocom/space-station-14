@@ -1,5 +1,6 @@
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Popups;
+using Content.Shared.Actions;
 using Content.Shared.Audio;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
@@ -7,8 +8,10 @@ using Content.Shared.Extinguisher;
 using Content.Shared.FixedPoint;
 using Content.Shared.Interaction;
 using Content.Shared.Interaction.Events;
+using Content.Shared.Toggleable;
 using Content.Shared.Verbs;
 using Robust.Shared.Audio;
+using Robust.Shared.Containers;
 using Robust.Shared.Player;
 
 namespace Content.Server.Extinguisher;
@@ -18,6 +21,8 @@ public sealed class FireExtinguisherSystem : EntitySystem
     [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
     [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
+    [Dependency] private readonly SharedContainerSystem _containers = default!;
+    [Dependency] private readonly SharedActionsSystem _actions = default!;
 
     public override void Initialize()
     {
@@ -28,6 +33,7 @@ public sealed class FireExtinguisherSystem : EntitySystem
         SubscribeLocalEvent<FireExtinguisherComponent, AfterInteractEvent>(OnAfterInteract);
         SubscribeLocalEvent<FireExtinguisherComponent, GetVerbsEvent<InteractionVerb>>(OnGetInteractionVerbs);
         SubscribeLocalEvent<FireExtinguisherComponent, SprayAttemptEvent>(OnSprayAttempt);
+        SubscribeLocalEvent<FireExtinguisherComponent, ToggleActionEvent>(OnToggleAction);
     }
 
     private void OnFireExtinguisherInit(EntityUid uid, FireExtinguisherComponent component, ComponentInit args)
@@ -43,7 +49,7 @@ public sealed class FireExtinguisherSystem : EntitySystem
         if (args.Handled)
             return;
 
-        ToggleSafety(uid, args.User, component);
+        ToggleSafety(uid, component, args.User);
 
         args.Handled = true;
     }
@@ -99,7 +105,7 @@ public sealed class FireExtinguisherSystem : EntitySystem
 
         var verb = new InteractionVerb
         {
-            Act = () => ToggleSafety(uid, args.User, component),
+            Act = () => ToggleSafety(uid, component, args.User),
             Text = Loc.GetString("fire-extinguisher-component-verb-text"),
         };
 
@@ -115,7 +121,15 @@ public sealed class FireExtinguisherSystem : EntitySystem
             args.Cancel();
         }
     }
+    private void OnToggleAction(EntityUid uid, FireExtinguisherComponent component, ToggleActionEvent args)
+    {
+        if (args.Handled)
+            return;
 
+        ToggleSafety(uid, component, null);
+
+        args.Handled = true;
+    }
     private void UpdateAppearance(EntityUid uid, FireExtinguisherComponent comp,
         AppearanceComponent? appearance=null)
     {
@@ -128,8 +142,8 @@ public sealed class FireExtinguisherSystem : EntitySystem
         }
     }
 
-    public void ToggleSafety(EntityUid uid, EntityUid user,
-        FireExtinguisherComponent? extinguisher = null)
+    public void ToggleSafety(EntityUid uid, 
+        FireExtinguisherComponent? extinguisher = null, EntityUid? user = null)
     {
         if (!Resolve(uid, ref extinguisher))
             return;
