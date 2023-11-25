@@ -13,6 +13,7 @@
         fractalType: FBm
         octaves: 2
         lacunarity: 2
+        gain: 0.5
     - !type:BiomeMetaLayer
       template: Grasslands
       threshold: 0
@@ -22,6 +23,7 @@
         fractalType: FBm
         octaves: 2
         lacunarity: 2
+        gain: 0.5
     - !type:BiomeMetaLayer
       template: Snow
       threshold: 0.5
@@ -31,6 +33,7 @@
         fractalType: FBm
         octaves: 2
         lacunarity: 2
+        gain: 0.5
 
 # Desert
 # TODO: Water in desert
@@ -59,6 +62,7 @@
         fractalType: FBm
         octaves: 5
         lacunarity: 2
+        gain: 1
         cellularDistanceFunction: Euclidean
         cellularReturnType: Distance2
       allowedTiles:
@@ -125,6 +129,7 @@
         fractalType: FBm
         octaves: 5
         lacunarity: 2
+        gain: 1
         cellularDistanceFunction: Euclidean
         cellularReturnType: Distance2
       decals:
@@ -169,6 +174,7 @@
         lacunarity: 2
         fractalType: FBm
         octaves: 5
+        gain: 1
         cellularDistanceFunction: Euclidean
         cellularReturnType: Distance2
       entities:
@@ -223,6 +229,7 @@
         lacunarity: 2
         fractalType: FBm
         octaves: 5
+        gain: 1
         cellularDistanceFunction: Euclidean
         cellularReturnType: Distance2
 
@@ -298,6 +305,7 @@
         lacunarity: 2
         fractalType: FBm
         octaves: 5
+        gain: 1
         cellularDistanceFunction: Euclidean
         cellularReturnType: Distance2
       entities:
@@ -362,6 +370,7 @@
         fractalType: FBm
         octaves: 5
         lacunarity: 2
+        gain: 1
         cellularDistanceFunction: Euclidean
         cellularReturnType: Distance2
       decals:
@@ -427,6 +436,7 @@
         lacunarity: 2
         fractalType: FBm
         octaves: 5
+        gain: 1
         cellularDistanceFunction: Euclidean
         cellularReturnType: Distance2
       entities:
@@ -442,6 +452,7 @@
         lacunarity: 2
         fractalType: FBm
         octaves: 5
+        gain: 1
         cellularDistanceFunction: Euclidean
         cellularReturnType: Distance2
     - !type:BiomeDummyLayer
@@ -575,7 +586,7 @@
         fractalType: Ridged
         octaves: 1
         frequency: 0.1
-        gain: 0.5
+        gain: 0
       allowedTiles:
         - FloorAsteroidSand
       entities:

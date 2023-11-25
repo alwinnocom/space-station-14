@@ -47,10 +47,4 @@ public sealed partial class PortalComponent : Component
     /// </remarks>
     [DataField("maxTeleportRadius")]
     public float? MaxTeleportRadius;
-
-    /// <summary>
-    /// Should we teleport randomly if nothing is linked.
-    /// </summary>
-    [DataField, AutoNetworkedField]
-    public bool RandomTeleport = true;
 }

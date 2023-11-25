@@ -123,14 +123,22 @@
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OreTin
+      proto:
+        Caves: OreTin
+        Grasslands: OreTin
+        Lava: BasaltOreTin
+        Snow: SnowOreTin
 
 - type: salvageLoot
   id: OreQuartz
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OreQuartz
+      proto:
+        Caves: OreQuartz
+        Grasslands: OreQuartz
+        Lava: BasaltOreQuartz
+        Snow: SnowOreQuartz
 
 # - Medium value
 - type: salvageLoot
@@ -138,14 +146,22 @@
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OreGold
+      proto:
+        Caves: OreGold
+        Grasslands: OreGold
+        Lava: BasaltOreGold
+        Snow: SnowOreGold
 
 - type: salvageLoot
   id: OreSilver
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OreSilver
+      proto:
+        Caves: OreSilver
+        Grasslands: OreSilver
+        Lava: BasaltOreSilver
+        Snow: SnowOreSilver
 
 # - High value
 - type: salvageLoot
@@ -153,25 +169,41 @@
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OrePlasma
+      proto:
+        Caves: OrePlasma
+        Grasslands: OrePlasma
+        Lava: BasaltOrePlasma
+        Snow: SnowOrePlasma
 
 - type: salvageLoot
   id: OreUranium
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OreUranium
+      proto:
+        Caves: OreUranium
+        Grasslands: OreUranium
+        Lava: BasaltOreUranium
+        Snow: SnowOreUranium
 
 - type: salvageLoot
   id: OreBananium
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OreBananium
+      proto:
+        Caves: OreBananium
+        Grasslands: OreBananium
+        Lava: BasaltOreBananium
+        Snow: SnowOreBananium
 
 - type: salvageLoot
   id: OreArtifactFragment
   guaranteed: true
   loots:
     - !type:BiomeMarkerLoot
-      proto: OreArtifactFragment
+      proto:
+        Caves: OreArtifactFragment
+        Grasslands: OreArtifactFragment
+        Lava: BasaltOreArtifactFragment
+        Snow: SnowOreArtifactFragment
