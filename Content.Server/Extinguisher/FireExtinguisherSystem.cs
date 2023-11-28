@@ -1,6 +1,6 @@
 using Content.Server.Fluids.EntitySystems;
 using Content.Server.Popups;
-using Content.Shared.Actions;
+using Content.Shared.Actions; 
 using Content.Shared.Audio;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
@@ -23,6 +23,8 @@ public sealed class FireExtinguisherSystem : EntitySystem
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
     [Dependency] private readonly SharedContainerSystem _containers = default!;
     [Dependency] private readonly SharedActionsSystem _actions = default!;
+    [Dependency] private readonly ActionContainerSystem _actionContainer = default!;
+
 
     public override void Initialize()
     {
@@ -33,7 +35,9 @@ public sealed class FireExtinguisherSystem : EntitySystem
         SubscribeLocalEvent<FireExtinguisherComponent, AfterInteractEvent>(OnAfterInteract);
         SubscribeLocalEvent<FireExtinguisherComponent, GetVerbsEvent<InteractionVerb>>(OnGetInteractionVerbs);
         SubscribeLocalEvent<FireExtinguisherComponent, SprayAttemptEvent>(OnSprayAttempt);
+        // Uses Content.Shared.Actions, Content.Shared.Toggleable, & Robust.Shared.Containers to make the Action component work. 
         SubscribeLocalEvent<FireExtinguisherComponent, ToggleActionEvent>(OnToggleAction);
+        SubscribeLocalEvent<FireExtinguisherComponent, GetItemActionsEvent>(OnGetActions);
     }
 
     private void OnFireExtinguisherInit(EntityUid uid, FireExtinguisherComponent component, ComponentInit args)
@@ -71,7 +75,7 @@ public sealed class FireExtinguisherSystem : EntitySystem
             return;
         }
 
-        if (args.Target is not {Valid: true} target ||
+        if (args.Target is not { Valid: true } target ||
             !_solutionContainerSystem.TryGetDrainableSolution(target, out var targetSolution) ||
             !_solutionContainerSystem.TryGetRefillableSolution(uid, out var container))
         {
@@ -97,7 +101,11 @@ public sealed class FireExtinguisherSystem : EntitySystem
                 uid, args.Target.Value);
         }
     }
-
+    private void OnGetActions(EntityUid uid, FireExtinguisherComponent component, GetItemActionsEvent args)
+    {
+        _actionContainer.EnsureAction(uid, ref component.ToggleActionEntity, component.ToggleAction);
+        args.AddAction(ref component.ToggleActionEntity, component.ToggleAction);
+    }
     private void OnGetInteractionVerbs(EntityUid uid, FireExtinguisherComponent component, GetVerbsEvent<InteractionVerb> args)
     {
         if (!args.CanInteract)
@@ -131,7 +139,7 @@ public sealed class FireExtinguisherSystem : EntitySystem
         args.Handled = true;
     }
     private void UpdateAppearance(EntityUid uid, FireExtinguisherComponent comp,
-        AppearanceComponent? appearance=null)
+        AppearanceComponent? appearance = null)
     {
         if (!Resolve(uid, ref appearance, false))
             return;
@@ -142,7 +150,7 @@ public sealed class FireExtinguisherSystem : EntitySystem
         }
     }
 
-    public void ToggleSafety(EntityUid uid, 
+    public void ToggleSafety(EntityUid uid,
         FireExtinguisherComponent? extinguisher = null, EntityUid? user = null)
     {
         if (!Resolve(uid, ref extinguisher))

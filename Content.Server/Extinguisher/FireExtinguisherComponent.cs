@@ -1,5 +1,7 @@
 using Content.Shared.Extinguisher;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototype;
 
 namespace Content.Server.Extinguisher;
 
@@ -7,4 +9,11 @@ namespace Content.Server.Extinguisher;
 [Access(typeof(FireExtinguisherSystem))]
 public sealed partial class FireExtinguisherComponent : SharedFireExtinguisherComponent
 {
+    // <summary>
+    //"ActionToggleSafety" refers to an entity created in Resources/Prototypes/Actions/extinguisher.yml
+    // </summary>
+    [DataField("toggleAction", customTypeSerializer: typeof(PrototypeIdSerializer<EntityPrototype>))]
+    public string ToggleAction = "ActionToggleSafety";
+
+    [DataField("toggleActionEntity")] public EntityUid? ToggleActionEntity;
 }
