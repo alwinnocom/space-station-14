@@ -44,6 +44,11 @@ public sealed class FireExtinguisherSystem : EntitySystem
         if (component.HasSafety)
         {
             UpdateAppearance(uid, component);
+            /// <summary>
+            /// Initially sets Toggled to True so ActionUIController.cs uses "On sprite" via "action.iconOn"
+            /// Action Menu will set Fire Extinguisher's "On sprite" by default instead of "Off sprite".
+            /// </summary>
+            _actions.SetToggled(component.ToggleActionEntity, false);
         }
     }
 
@@ -168,7 +173,7 @@ public sealed class FireExtinguisherSystem : EntitySystem
             uid, AudioHelpers.WithVariation(0.125f).WithVolume(-4f));
         UpdateAppearance(uid, extinguisher);
 
-        // Change the sprite from Off to On or On to Off
+        // Change the sprite from Off to On or On to Off via SharedActionSystem.cs & ActionUIController.cs StartTargeting()
         _actions.SetToggled(extinguisher.ToggleActionEntity, extinguisher.Safety);
 
     }
