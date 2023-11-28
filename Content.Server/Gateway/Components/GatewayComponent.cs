@@ -11,6 +11,25 @@ namespace Content.Server.Gateway.Components;
 public sealed partial class GatewayComponent : Component
 {
     /// <summary>
+    /// Whether this destination is shown in the gateway ui.
+    /// If you are making a gateway for an admeme set this once you are ready for players to select it.
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public bool Enabled;
+
+    /// <summary>
+    /// Can the gateway be interacted with? If false then only settable via admins / mappers.
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public bool Interactable = true;
+
+    /// <summary>
+    /// Name as it shows up on the ui of station gateways.
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public FormattedMessage Name = new();
+
+    /// <summary>
     /// Sound to play when opening the portal.
     /// </summary>
     /// <remarks>
