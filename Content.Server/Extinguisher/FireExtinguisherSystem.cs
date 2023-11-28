@@ -11,7 +11,6 @@ using Content.Shared.Interaction.Events;
 using Content.Shared.Toggleable;
 using Content.Shared.Verbs;
 using Robust.Shared.Audio;
-using Robust.Shared.Containers;
 using Robust.Shared.Player;
 
 namespace Content.Server.Extinguisher;
@@ -21,11 +20,8 @@ public sealed class FireExtinguisherSystem : EntitySystem
     [Dependency] private readonly SolutionContainerSystem _solutionContainerSystem = default!;
     [Dependency] private readonly PopupSystem _popupSystem = default!;
     [Dependency] private readonly SharedAppearanceSystem _appearance = default!;
-    [Dependency] private readonly SharedContainerSystem _containers = default!;
-    [Dependency] private readonly SharedActionsSystem _actions = default!;
     [Dependency] private readonly ActionContainerSystem _actionContainer = default!;
-
-
+    [Dependency] private readonly SharedActionsSystem _actions = default!;
     public override void Initialize()
     {
         base.Initialize();
@@ -35,7 +31,10 @@ public sealed class FireExtinguisherSystem : EntitySystem
         SubscribeLocalEvent<FireExtinguisherComponent, AfterInteractEvent>(OnAfterInteract);
         SubscribeLocalEvent<FireExtinguisherComponent, GetVerbsEvent<InteractionVerb>>(OnGetInteractionVerbs);
         SubscribeLocalEvent<FireExtinguisherComponent, SprayAttemptEvent>(OnSprayAttempt);
-        // Uses Content.Shared.Actions, Content.Shared.Toggleable, & Robust.Shared.Containers to make the Action component work. 
+        /// <summary>
+        /// Uses Content.Shared.Actions & Content.Shared.Toggleable to use code related to the Action menu. 
+        /// This makes the component subscribe to events that will activate when the ActionToggleSafety prototype is clicked.
+        /// </summary>
         SubscribeLocalEvent<FireExtinguisherComponent, ToggleActionEvent>(OnToggleAction);
         SubscribeLocalEvent<FireExtinguisherComponent, GetItemActionsEvent>(OnGetActions);
     }
@@ -101,6 +100,10 @@ public sealed class FireExtinguisherSystem : EntitySystem
                 uid, args.Target.Value);
         }
     }
+    /// <summary>
+    /// Uses ActionContainerSystem.cs to check if the entity is already an action.
+    /// Uses ActionEvents.cs to create the logic that registers the "ActionToggleSafety" entity in the Actions menu.  
+    /// </summary>
     private void OnGetActions(EntityUid uid, FireExtinguisherComponent component, GetItemActionsEvent args)
     {
         _actionContainer.EnsureAction(uid, ref component.ToggleActionEntity, component.ToggleAction);
@@ -129,6 +132,10 @@ public sealed class FireExtinguisherSystem : EntitySystem
             args.Cancel();
         }
     }
+    /// <summary>
+    /// When the user clicks the entity defined by "ActionToggleSafety", a ToggleActionEvent
+    /// recognizes this and activates OnToggleAction, which activates ToggleSafety.
+    /// </summary>
     private void OnToggleAction(EntityUid uid, FireExtinguisherComponent component, ToggleActionEvent args)
     {
         if (args.Handled)
@@ -160,5 +167,9 @@ public sealed class FireExtinguisherSystem : EntitySystem
         SoundSystem.Play(extinguisher.SafetySound.GetSound(), Filter.Pvs(uid),
             uid, AudioHelpers.WithVariation(0.125f).WithVolume(-4f));
         UpdateAppearance(uid, extinguisher);
+
+        // Change the sprite from Off to On or On to Off
+        _actions.SetToggled(extinguisher.ToggleActionEntity, extinguisher.Safety);
+
     }
 }
