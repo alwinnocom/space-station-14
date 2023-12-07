@@ -9,13 +9,8 @@ public sealed class SlowContactsSystem : SharedContactsSystem
 {
     public override void Initialize()
     {
-        base.Initialize();
-
-        SubscribeLocalEvent<SlowContactsComponent, StartCollideEvent>(OnEntityEnter);
-        SubscribeLocalEvent<SlowContactsComponent, EndCollideEvent>(OnEntityExit);
-        SubscribeLocalEvent<SlowedByContactComponent, RefreshMovementSpeedModifiersEvent>(MovementSpeedCheck);
-        SubscribeLocalEvent<SlowContactsComponent, ComponentShutdown>(OnShutdown);
-        UpdatesAfter.Add(typeof(SharedPhysicsSystem));
+        SlowContactsComponent component = new SlowContactsComponent();
+        base.Initialize(component);
     }
 
 

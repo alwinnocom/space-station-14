@@ -9,13 +9,8 @@ public sealed class FrictionContactsSystem : SharedContactsSystem
 {
     public override void Initialize()
     {
-        base.Initialize();
-
-        SubscribeLocalEvent<FrictionContactsComponent, StartCollideEvent>(OnEntityEnter);
-        SubscribeLocalEvent<FrictionContactsComponent, EndCollideEvent>(OnEntityExit);
-        SubscribeLocalEvent<FrictionContactsComponent, ComponentShutdown>(OnShutdown);
-
-        UpdatesAfter.Add(typeof(SharedPhysicsSystem));
+        FrictionContactsComponent component = new FrictionContactsComponent();
+        base.Initialize(component);
     }
     private void OnEntityEnter(EntityUid uid, FrictionContactsComponent component, ref StartCollideEvent args)
     {

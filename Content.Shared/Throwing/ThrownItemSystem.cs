@@ -87,7 +87,7 @@ namespace Content.Shared.Throwing
         private void OnSleep(EntityUid uid, ThrownItemComponent thrownItem, ref PhysicsSleepEvent @event)
         {
             // error CS1061: 'PhysicsSleepEvent' does not contain a definition for 'Cancelled' and no accessible extension method 'Cancelled' accepting a first argument of type 'PhysicsSleepEvent' could be found
-            @event.Cancelled = true; // Causes an error that stops the build because PhysicsSleepEvent does not have Cancelled.
+            // @event.Cancelled = true; // Causes an error that stops the build because PhysicsSleepEvent does not have Cancelled.
             StopThrow(uid, thrownItem);
         }
 

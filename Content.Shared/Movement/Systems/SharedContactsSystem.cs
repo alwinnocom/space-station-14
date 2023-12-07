@@ -16,9 +16,20 @@ namespace Content.Shared.Movement.Systems
         // Either these need to be processed before a map is saved, or slowed/slowing entities need to update on init.
         protected HashSet<EntityUid> _toUpdate = new();
         protected HashSet<EntityUid> _toRemove = new();
-        public override void Initialize()
+        public void Initialize(IComponent component)
         {
             base.Initialize();
+
+            // Type ContactsComponentType = component.GetType();
+            SubscribeLocalEvent<component, StartCollideEvent>(OnEntityEnter_Contacts);
+            SubscribeLocalEvent<component, EndCollideEvent>(OnEntityExit_Contacts);
+            SubscribeLocalEvent<component, ComponentShutdown>(OnShutdown_Contacts);
+
+            if (typeof(component) == typeof(SlowContactsComponent))
+                SlowContactsSystem slow = new SlowContactsSystem();
+                SubscribeLocalEvent<SlowedByContactComponent, RefreshMovementSpeedModifiersEvent>(slow.MovementSpeedCheck);
+
+            UpdatesAfter.Add(typeof(SharedPhysicsSystem));
         }
 
         protected void OnEntityEnter_Contacts(EntityUid uid, Component component, ref StartCollideEvent args)
