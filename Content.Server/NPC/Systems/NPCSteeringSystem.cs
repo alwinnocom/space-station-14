@@ -358,6 +358,12 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
         // If seek has arrived at the target node for example then immediately re-steer.
         var forceSteer = true;
 
+        // Check if NPC is supposed to walk through an object
+        var layerAfter = CollisionLayerRemoved(uid, agentRadius, layer);
+
+        // If NPC should walk through, layer is temporarily changed.
+        body.CollisionLayer = layerAfter;
+
         if (steering.CanSeek && !TrySeek(uid, mover, steering, body, xform, offsetRot, moveSpeed, interest, frameTime, ref forceSteer))
         {
             SetDirection(uid, mover, steering, Vector2.Zero);
@@ -411,6 +417,9 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
         steering.LastSteerDirection = resultDirection;
         DebugTools.Assert(!float.IsNaN(resultDirection.X));
         SetDirection(uid, mover, steering, resultDirection, false);
+
+        // Reset NPC collision layer if temporarily changed by CollisionLayerRemoved
+        body.CollisionLayer = layer;
     }
 
     private EntityCoordinates GetCoordinates(PathPoly poly)

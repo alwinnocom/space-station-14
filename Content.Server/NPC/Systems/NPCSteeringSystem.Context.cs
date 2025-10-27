@@ -12,6 +12,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;
 using ClimbingComponent = Content.Shared.Climbing.Components.ClimbingComponent;
+using Robust.Shared.Prototypes;  // checking Prototype's Components to see if Collision Removal needed
 
 namespace Content.Server.NPC.Systems;
 
@@ -563,6 +564,51 @@ public sealed partial class NPCSteeringSystem
         _entSetPool.Return(ents);
     }
 
+    #endregion
+
+    #region Collision Removal
+
+    /// <summary>
+    /// Allows specific NPCs to pass/walk through a specific object by removing collision.
+    /// </summary>
+    private int CollisionLayerRemoved(
+        EntityUid uid,
+        float agentRadius,
+        int layer
+        )
+    {
+        // TODO: Refactor the CollisionAvoidance code block that is repeated here.
+        var objectRadius = 0.25f;
+        var detectionRadius = MathF.Max(0.35f, agentRadius + objectRadius);
+        var ents = _entSetPool.Get();
+        _lookup.GetEntitiesInRange(uid, detectionRadius, ents, LookupFlags.Dynamic | LookupFlags.Static | LookupFlags.Approximate);
+
+        // If NPC layer == ent layer & NPC should pass through object, set layer = -1 temporarily
+        foreach (var ent in ents)
+        {
+            // get obstacle, set it to otherBody
+            if (_physicsQuery.TryGetComponent(ent, out var otherBody) &&
+                (layer == otherBody.CollisionLayer))
+            {
+                // Null check
+                if (uid.Prototype is null || uid.Prototype.Components is null || otherBody.Owner.Prototype is null || otherBody.Owner.Prototype.Components is null)
+                {
+                    return layer;
+                }
+
+                // Spider NPC & Web Object check
+                if (uid.Prototype.Components.TryGetComponent("IgnoreSpiderWeb", out var npcComponent) && otherBody.Owner.Prototype.Components.TryGetComponent("SpiderWebObject", out var obstacleComponent))
+                {
+                    layer = -1;
+                }
+            }
+        }
+
+        _entSetPool.Return(ents);
+
+        // Function returns current layer value.
+        return layer;
+    }
     #endregion
 
     #region Dynamic Avoidance
